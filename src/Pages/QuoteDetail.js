@@ -30,8 +30,8 @@ const QuoteDetail = () => {
       <HighlightedQuote text={quote.text} author={quote.author} />
       <Route path={`/quotes/${param.quoteId}`} exact>
         <div className="centered">
-          <Link to={`/quotes/${param.quoteId}/comments`}>
-            <button className="btn--flat">Show Comment</button>
+          <Link to={`/quotes/${param.quoteId}/comments`} className="btn--flat">
+            Load Comment
           </Link>
         </div>
       </Route>
