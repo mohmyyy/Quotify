@@ -1,35 +1,46 @@
-import { Fragment } from "react";
-import { Link, Route, useParams,useRouteMatch } from "react-router-dom";
+import { Fragment, useEffect } from "react";
+import { Link, Route, useParams, useRouteMatch } from "react-router-dom";
 import Comments from "../Components/Comments/Comments";
 import HighlightedQuote from "../Components/quotes/HighlightedQuote";
+import useHttp from "../Components/Hooks/use-http";
+import { getSingleQuote } from "../Components/lib/api";
+import LoadingSpinner from "../Components/UI/LoadingSpinner";
 
 const QuoteDetail = () => {
   const match = useRouteMatch();
-  console.log(match)
-  const DummyQuotes = [
-    {
-      id: "m1",
-      text: "The most superior among you (Muslims) are those who learn the Qur'an and teach it. ...",
-      author: "Prophet Muhammed PBUH",
-    },
-    {
-      id: "m2",
-      text: "No man is a true believer unless he desires for his brother that, what he desires for himself",
-      author: "Prophet Muhammed PBUH",
-    },
-  ];
 
   const param = useParams();
-  const quote = DummyQuotes.find((quote) => quote.id === param.quoteId);
-  if (!quote) {
+  const { quoteId } = param;
+
+  const {
+    sendRequest,
+    data: loadedData,
+    error,
+    status,
+  } = useHttp(getSingleQuote, true);
+
+  useEffect(() => {
+    sendRequest(quoteId);
+  }, [sendRequest, quoteId]);
+
+  if (status === "pending") {
     return (
-      <HighlightedQuote text="No Results Found" author="No Author found" />
+      <div className="centered">
+        <LoadingSpinner />
+      </div>
     );
   }
+  if (error) {
+    return <p className="centered">{error}</p>;
+  }
+  if (!loadedData.text) {
+    return <p>No Quote Found!</p>;
+  }
+  console.log(loadedData);
 
   return (
     <Fragment>
-      <HighlightedQuote text={quote.text} author={quote.author} />
+      <HighlightedQuote text={loadedData.text} author={loadedData.author} />
       <Route path={`${match.path}`} exact>
         <div className="centered">
           <Link to={`${match.url}/comments`} className="btn--flat">
