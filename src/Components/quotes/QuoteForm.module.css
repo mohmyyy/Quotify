@@ -33,7 +33,7 @@
   width: 100%;
   font-size: 1.25rem;
 }
-
+ 
 .control input:focus,
 .control textarea:focus {
   background-color: #cbf8f8;
